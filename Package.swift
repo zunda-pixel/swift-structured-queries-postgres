@@ -44,32 +44,24 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-tagged", from: "0.10.0"),
         .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", exact: "1.6.1"),
         .package(url: "https://github.com/swiftlang/swift-syntax", "600.0.0"..<"603.0.0"),
-        // new snapshot contains fix for swift build and swift test linker issue.
-//        .package(url: "https://github.com/swiftlang/swift-syntax", branch: "swift-6.2-DEVELOPMENT-SNAPSHOT-2025-10-09-a"),
         .package(url: "https://github.com/vapor/postgres-nio", from: "1.22.0"),
     ],
     targets: [
         .target(
             name: "StructuredQueriesCore",
             dependencies: [
-                "StructuredQueriesPostgresSupport",
+                .target(name: "StructuredQueriesPostgresSupport"),
                 .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
-                .product(
-                    name: "CasePaths",
-                    package: "swift-case-paths",
-                ),
-                .product(
-                    name: "Tagged",
-                    package: "swift-tagged",
-                ),
+                .product(name: "CasePaths", package: "swift-case-paths"),
+                .product(name: "Tagged", package: "swift-tagged"),
             ],
             exclude: ["Symbolic Links/README.md"]
         ),
         .target(
             name: "StructuredQueriesPostgres",
             dependencies: [
-                "StructuredQueriesCore",
-                "StructuredQueriesPostgresMacros",
+                .target(name: "StructuredQueriesCore"),
+                .target(name: "StructuredQueriesPostgresMacros"),
             ]
         ),
         .macro(
@@ -83,25 +75,21 @@ let package = Package(
         .target(
             name: "StructuredQueriesPostgresTestSupport",
             dependencies: [
-                "StructuredQueriesCore",
+                .target(name: "StructuredQueriesCore"),
                 .product(name: "CustomDump", package: "swift-custom-dump"),
                 .product(name: "InlineSnapshotTesting", package: "swift-snapshot-testing"),
                 .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
-                .product(
-                    name: "PostgresNIO",
-                    package: "postgres-nio",
-                ),
+                .product(name: "PostgresNIO", package: "postgres-nio"),
             ]
         ),
         .target(
-            name: "StructuredQueriesPostgresSupport",
-            dependencies: []
+            name: "StructuredQueriesPostgresSupport"
         ),
         .testTarget(
             name: "StructuredQueriesPostgresMacrosTests",
             dependencies: [
-                "StructuredQueriesPostgres",
-                "StructuredQueriesPostgresMacros",
+                .target(name: "StructuredQueriesPostgres"),
+                .target(name: "StructuredQueriesPostgresMacros"),
                 .product(name: "IssueReporting", package: "xctest-dynamic-overlay"),
                 .product(name: "MacroTesting", package: "swift-macro-testing"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
@@ -110,8 +98,8 @@ let package = Package(
         .testTarget(
             name: "StructuredQueriesPostgresTests",
             dependencies: [
-                "StructuredQueriesPostgres",
-                "StructuredQueriesPostgresTestSupport",
+                .target(name: "StructuredQueriesPostgres"),
+                .target(name: "StructuredQueriesPostgresTestSupport"),
                 .product(name: "CustomDump", package: "swift-custom-dump"),
                 .product(name: "Dependencies", package: "swift-dependencies"),
                 .product(name: "InlineSnapshotTesting", package: "swift-snapshot-testing"),
@@ -120,13 +108,12 @@ let package = Package(
         .testTarget(
             name: "READMEExamplesTests",
             dependencies: [
-                "StructuredQueriesPostgres",
-                "StructuredQueriesPostgresTestSupport",
+                .target(name: "StructuredQueriesPostgres"),
+                .target(name: "StructuredQueriesPostgresTestSupport"),
                 .product(name: "InlineSnapshotTesting", package: "swift-snapshot-testing"),
             ]
         ),
     ],
-    swiftLanguageModes: [.v6]
 )
 
 let swiftSettings: [SwiftSetting] = [
