@@ -35,6 +35,28 @@ let package = Package(
             targets: ["StructuredQueriesPostgresSupport"]
         ),
     ],
+    traits: [
+        .trait(
+            name: "StructuredQueriesPostgresCasePaths",
+            description: "Introduce enum table support to StructuredQueries."
+        ),
+        .trait(
+            name: "StructuredQueriesPostgresTagged",
+            description: "Introduce StructuredQueries conformances to the swift-tagged package."
+        ),
+        .trait(
+            name: "StructuredQueriesPostgresSQLValidation",
+            description:
+                "Enable SQL syntax validation against PostgreSQL using postgres-nio. Heavy dependency - only enable for validation testing."
+        ),
+        .default(
+            enabledTraits: [
+                "StructuredQueriesPostgresCasePaths",
+                "StructuredQueriesPostgresTagged",
+//                "StructuredQueriesPostgresSQLValidation",
+            ]
+        ),
+    ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.7.2"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.3"),
@@ -57,10 +79,12 @@ let package = Package(
                 .product(
                     name: "CasePaths",
                     package: "swift-case-paths",
+                    condition: .when(traits: ["StructuredQueriesPostgresCasePaths"])
                 ),
                 .product(
                     name: "Tagged",
                     package: "swift-tagged",
+                    condition: .when(traits: ["StructuredQueriesPostgresTagged"])
                 ),
             ],
             exclude: ["Symbolic Links/README.md"]
@@ -90,6 +114,7 @@ let package = Package(
                 .product(
                     name: "PostgresNIO",
                     package: "postgres-nio",
+                    condition: .when(traits: ["StructuredQueriesPostgresSQLValidation"])
                 ),
             ]
         ),
