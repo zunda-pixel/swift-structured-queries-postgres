@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.2
 
 import CompilerPluginSupport
 import PackageDescription
@@ -12,10 +12,10 @@ import PackageDescription
 let package = Package(
     name: "swift-structured-queries-postgres",
     platforms: [
-        .iOS(.v16),
-        .macOS(.v13)
-        //        .tvOS(.v13),
-        //        .watchOS(.v6)
+        .iOS(.v26),
+        .macOS(.v26),
+        .tvOS(.v26),
+        .watchOS(.v26)
     ],
     products: [
         .library(
@@ -62,7 +62,8 @@ let package = Package(
             dependencies: [
                 .target(name: "StructuredQueriesCore"),
                 .target(name: "StructuredQueriesPostgresMacros"),
-            ]
+            ],
+            exclude: ["Functions/Aggregate/_COVERAGE.md"]
         ),
         .macro(
             name: "StructuredQueriesPostgresMacros",
@@ -103,7 +104,8 @@ let package = Package(
                 .product(name: "CustomDump", package: "swift-custom-dump"),
                 .product(name: "Dependencies", package: "swift-dependencies"),
                 .product(name: "InlineSnapshotTesting", package: "swift-snapshot-testing"),
-            ]
+            ],
+            exclude: ["StructuredQueriesPostgres.xctestplan"]
         ),
         .testTarget(
             name: "READMEExamplesTests",

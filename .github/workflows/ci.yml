@@ -14,41 +14,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  macos:
-    name: macOS (Xcode ${{ matrix.xcode }})
-    runs-on: macos-${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: '26'
-            xcode: '26.0'
-            swift: '6.2'
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Select Xcode ${{ matrix.xcode }}
-        run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
-
-      - name: Print environment
-        run: |
-          xcodebuild -version
-          swift --version
-          echo "macOS $(sw_vers -productVersion)"
-
-      - name: Cache Swift packages
-        uses: actions/cache@v4
-        with:
-          path: .build
-          key: ${{ runner.os }}-xcode-${{ matrix.xcode }}-spm-${{ hashFiles('Package.swift') }}
-          restore-keys: |
-            ${{ runner.os }}-xcode-${{ matrix.xcode }}-spm-
-            ${{ runner.os }}-spm-
-
-      - name: Build and test
-        run: swift test --filter StructuredQueriesPostgresTests
-        timeout-minutes: 15
-
   linux:
     name: Linux (Swift ${{ matrix.swift }})
     runs-on: ubuntu-latest
@@ -57,7 +22,6 @@ jobs:
       fail-fast: false
       matrix:
         swift:
-          - '6.1'
           - '6.2'
     steps:
       - uses: actions/checkout@v5
@@ -66,7 +30,8 @@ jobs:
         run: |
           swift --version
           uname -a
-
+      - name: Build
+        run: swift build
       - name: Build and test
         run: swift test --filter StructuredQueriesPostgresTests
         timeout-minutes: 15
