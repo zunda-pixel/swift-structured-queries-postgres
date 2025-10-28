@@ -1,5 +1,5 @@
-import Foundation
-import StructuredQueriesCore
+public import Foundation
+public import StructuredQueriesCore
 
 // MARK: - Date/Time Field Extraction
 //

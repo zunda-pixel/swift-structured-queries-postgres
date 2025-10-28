@@ -155,7 +155,11 @@ let package = Package(
 )
 
 let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("MemberImportVisibility")
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("InternalImportsByDefault"),
+    .enableUpcomingFeature("MemberImportVisibility"),
+    .enableUpcomingFeature("InferIsolatedConformances"),
+    .enableUpcomingFeature("ImmutableWeakCaptures"),
 ]
 
 for index in package.targets.indices {
