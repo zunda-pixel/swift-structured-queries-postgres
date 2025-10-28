@@ -1,5 +1,5 @@
 #if StructuredQueriesPostgresTagged
-    import Tagged
+    public import Tagged
 
     extension Tagged: _OptionalPromotable where RawValue: _OptionalPromotable {}
 

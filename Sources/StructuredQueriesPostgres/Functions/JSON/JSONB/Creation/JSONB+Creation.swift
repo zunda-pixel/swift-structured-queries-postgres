@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 import StructuredQueriesCore
 
 // MARK: - JSONB.Creation (Table 9.49)

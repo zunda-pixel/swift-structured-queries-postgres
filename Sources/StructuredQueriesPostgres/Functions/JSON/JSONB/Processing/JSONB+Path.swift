@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 import StructuredQueriesCore
 
 // MARK: - JSONB.Processing.Path (Table 9.51)

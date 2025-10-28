@@ -8,7 +8,7 @@ import PostgresNIO
 #endif
 
 
-import StructuredQueriesCore
+public import StructuredQueriesCore
 import Testing
 
 // MARK: - Shared Client

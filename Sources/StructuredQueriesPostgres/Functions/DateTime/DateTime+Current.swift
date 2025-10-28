@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 import StructuredQueriesCore
 
 // MARK: - Current Date/Time Functions
