@@ -39,7 +39,7 @@ public struct Updates<Base: Table>: Sendable {
   }
 
   @_disfavoredOverload
-  public subscript<Value: QueryExpression>(
+  public subscript<Value: QueryExpression & QueryOutputAssignable>(
     dynamicMember keyPath: KeyPath<
       Base.TableColumns,
       some WritableTableColumnExpression<Base, Value>
