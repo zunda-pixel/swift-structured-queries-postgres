@@ -44,10 +44,10 @@ public struct Updates<Base: Table>: Sendable {
       Base.TableColumns,
       some WritableTableColumnExpression<Base, Value>
     >
-  ) -> Value.QueryOutput {
-    @available(*, unavailable)
-    get { fatalError() }
+  ) -> Value.QueryOutput? {
+    get { nil }
     set {
+      guard let newValue else { return }
       updates.append(
         (Base.columns[keyPath: keyPath].name, Value(queryOutput: newValue).queryFragment)
       )
@@ -64,10 +64,10 @@ public struct Updates<Base: Table>: Sendable {
   @_disfavoredOverload
   public subscript<Value: QueryExpression>(
     dynamicMember keyPath: KeyPath<Base.TableColumns, ColumnGroup<Base, Value>>
-  ) -> Value.QueryOutput {
-    @available(*, unavailable)
-    get { fatalError() }
+  ) -> Value.QueryOutput? {
+    get { nil }
     set {
+      guard let newValue else { return }
       func open<Root, V>(
         _ column: some WritableTableColumnExpression<Root, V>
       ) -> QueryFragment {
