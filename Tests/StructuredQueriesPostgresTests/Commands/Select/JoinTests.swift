@@ -39,6 +39,80 @@ extension SnapshotTests.Commands.Select {
         """
       }
     }
+
+    @Test func leftJoinLateralLatestChild() async {
+      await assertSQL(
+        of:
+          RemindersList
+          .leftJoinLateral { list in
+            Reminder
+              .where { $0.remindersListID.eq(list.id) }
+              .order { $0.updatedAt.desc() }
+              .limit(1)
+          }
+          .select { ($0.title, $1.title) }
+      ) {
+        """
+        SELECT "remindersLists"."title", "reminders"."title"
+        FROM "remindersLists"
+        LEFT OUTER JOIN LATERAL (SELECT "reminders"."id", "reminders"."assignedUserID", "reminders"."dueDate", "reminders"."isCompleted", "reminders"."isFlagged", "reminders"."notes", "reminders"."priority", "reminders"."remindersListID", "reminders"."title", "reminders"."updatedAt"
+        FROM "reminders"
+        WHERE ("reminders"."remindersListID") = ("remindersLists"."id")
+        ORDER BY "reminders"."updatedAt" DESC
+        LIMIT 1) AS "reminders" ON TRUE
+        """
+      }
+    }
+
+    @Test func innerJoinLateral() async {
+      await assertSQL(
+        of:
+          RemindersList
+          .joinLateral { list in
+            Reminder
+              .where { $0.remindersListID.eq(list.id) }
+              .order(by: \.dueDate)
+              .limit(1)
+          }
+          .select { ($0.title, $1.title) }
+      ) {
+        """
+        SELECT "remindersLists"."title", "reminders"."title"
+        FROM "remindersLists"
+        INNER JOIN LATERAL (SELECT "reminders"."id", "reminders"."assignedUserID", "reminders"."dueDate", "reminders"."isCompleted", "reminders"."isFlagged", "reminders"."notes", "reminders"."priority", "reminders"."remindersListID", "reminders"."title", "reminders"."updatedAt"
+        FROM "reminders"
+        WHERE ("reminders"."remindersListID") = ("remindersLists"."id")
+        ORDER BY "reminders"."dueDate"
+        LIMIT 1) AS "reminders" ON TRUE
+        """
+      }
+    }
+
+    @Test func leftJoinLateralFromWhere() async {
+      await assertSQL(
+        of:
+          RemindersList
+          .where { $0.position.gt(0) }
+          .leftJoinLateral { list in
+            Reminder
+              .where { $0.remindersListID.eq(list.id) }
+              .order { $0.updatedAt.desc() }
+              .limit(1)
+          }
+          .select { ($0.title, $1.title) }
+      ) {
+        """
+        SELECT "remindersLists"."title", "reminders"."title"
+        FROM "remindersLists"
+        LEFT OUTER JOIN LATERAL (SELECT "reminders"."id", "reminders"."assignedUserID", "reminders"."dueDate", "reminders"."isCompleted", "reminders"."isFlagged", "reminders"."notes", "reminders"."priority", "reminders"."remindersListID", "reminders"."title", "reminders"."updatedAt"
+        FROM "reminders"
+        WHERE ("reminders"."remindersListID") = ("remindersLists"."id")
+        ORDER BY "reminders"."updatedAt" DESC
+        LIMIT 1) AS "reminders" ON TRUE
+        WHERE ("remindersLists"."position") > (0)
+        """
+      }
+    }
   }
 }
 

@@ -422,18 +422,34 @@ public struct _JoinClause: QueryExpression, Sendable {
   let tableAlias: String?
   let tableColumns: QueryFragment
   let tableName: String
+  let lateralSubquery: QueryFragment?
 
-  init(
+  init<T: Table>(
     operator: Operator?,
-    table: any Table.Type,
+    table: T.Type,
     constraint: some QueryExpression<Bool>
   ) {
     self.constraint = constraint.queryFragment
     self.operator = `operator`?.queryFragment
-    schemaName = table.schemaName
-    tableAlias = table.tableAlias
-    tableColumns = table.columns.queryFragment
-    tableName = table.tableName
+    schemaName = T.schemaName
+    tableAlias = T.tableAlias
+    tableColumns = T.columns.queryFragment
+    tableName = T.tableName
+    lateralSubquery = nil
+  }
+
+  init<T: Table>(
+    operator: Operator?,
+    table: T.Type,
+    lateralSubquery: QueryFragment
+  ) {
+    self.constraint = "TRUE"
+    self.operator = `operator`?.queryFragment
+    schemaName = nil
+    tableAlias = T.tableAlias
+    tableColumns = T.columns.queryFragment
+    tableName = T.tableName
+    self.lateralSubquery = lateralSubquery
   }
 
   public var queryFragment: QueryFragment {
@@ -442,6 +458,12 @@ public struct _JoinClause: QueryExpression, Sendable {
       query.append("\(`operator`) ")
     }
     query.append("JOIN ")
+    if let lateralSubquery {
+      query.append("LATERAL (\(lateralSubquery)) ")
+      query.append("AS \(quote: tableAlias ?? tableName) ")
+      query.append("ON \(constraint)")
+      return query
+    }
     if let schemaName {
       query.append("\(quote: schemaName).")
     }
