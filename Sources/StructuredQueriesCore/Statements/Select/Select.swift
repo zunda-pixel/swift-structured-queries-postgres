@@ -424,31 +424,31 @@ public struct _JoinClause: QueryExpression, Sendable {
   let tableName: String
   let lateralSubquery: QueryFragment?
 
-  init(
+  init<T: Table>(
     operator: Operator?,
-    table: any Table.Type,
+    table: T.Type,
     constraint: some QueryExpression<Bool>
   ) {
     self.constraint = constraint.queryFragment
     self.operator = `operator`?.queryFragment
-    schemaName = table.schemaName
-    tableAlias = table.tableAlias
-    tableColumns = table.columns.queryFragment
-    tableName = table.tableName
+    schemaName = T.schemaName
+    tableAlias = T.tableAlias
+    tableColumns = T.columns.queryFragment
+    tableName = T.tableName
     lateralSubquery = nil
   }
 
-  init(
+  init<T: Table>(
     operator: Operator?,
-    table: any Table.Type,
+    table: T.Type,
     lateralSubquery: QueryFragment
   ) {
     self.constraint = "TRUE"
     self.operator = `operator`?.queryFragment
     schemaName = nil
-    tableAlias = table.tableAlias
-    tableColumns = table.columns.queryFragment
-    tableName = table.tableName
+    tableAlias = T.tableAlias
+    tableColumns = T.columns.queryFragment
+    tableName = T.tableName
     self.lateralSubquery = lateralSubquery
   }
 
